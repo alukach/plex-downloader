@@ -14,15 +14,17 @@ def get_server(account: MyPlexAccount) -> PlexServer:
 
 def select_playlists(account: MyPlexAccount):
     plex = get_server(account)
-    return inquirer.prompt(
+    all_playlists = plex.playlists()
+    selected = inquirer.prompt(
         [
             inquirer.Checkbox(
                 "playlists",
                 message="What are you interested in?",
-                choices=[(p.title, p) for p in plex.playlists()],
+                choices=[p.title for p in all_playlists],
             ),
         ]
-    )["playlists"]
+    )
+    return [p for p in all_playlists if p.title in selected["playlists"]]
 
 
 def get_tracks_from_playlist(playlists):
